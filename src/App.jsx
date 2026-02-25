@@ -3,9 +3,10 @@ import AppRoute from './app/router';
 
 function App() {
   return (
-    <>    
+    <>   
     <AppRoute />
     <Toaster position="top-right"/>
+    
     </>
 
   );
