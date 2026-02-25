@@ -1,8 +1,17 @@
+import { useEffect } from "react";
+import { http } from "../../../app/layouts/api/http";
+import { toastSuccess } from "../../../shared/lib/toast";
+
 export default function Tasks() {
-    return (
-        <div className="flex flex-col items-center justify-center h-screen">
-            <h1 className="text-4xl font-bold mb-4">Tasks</h1>
-            <p className="text-lg text-gray-600">Aqui você pode gerenciar suas tarefas!</p>
-        </div>
-    );
+  useEffect(() => {
+    http.get("/health")
+      .then((res) => toastSuccess(res.data))
+      .catch(() => {});
+  }, []);
+
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Tasks</h1>
+    </div>
+  );
 }
