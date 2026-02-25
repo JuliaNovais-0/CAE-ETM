@@ -4,9 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import br.com.cae.etm.tasks.user.application.v1.UserTokenService;
 
 import br.com.cae.etm.tasks.user.api.v1.AuthenticationDTO;
 import br.com.cae.etm.tasks.user.api.v1.LoginResponseDTO;
@@ -36,7 +37,7 @@ public class AuthenticationController {
 	private UserRepository repository;
 	
 	@Autowired
-	private TokenService tokenService;
+	private UserTokenService tokenService;
 	
 	@PostMapping("/register")
 	public ResponseEntity register(@RequestBody @Valid RegisterDTO dadosCadastro) {

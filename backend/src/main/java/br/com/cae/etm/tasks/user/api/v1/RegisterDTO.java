@@ -1,5 +1,7 @@
 package br.com.cae.etm.tasks.user.api.v1;
 
-public class RegisterDTO {
+import jakarta.validation.constraints.NotBlank;
+
+public record RegisterDTO(@NotBlank String login, @NotBlank String password) {
 
 }
