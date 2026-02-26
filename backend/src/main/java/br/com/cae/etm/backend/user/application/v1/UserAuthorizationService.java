@@ -1,9 +1,10 @@
-package br.com.cae.etm.tasks.user.application.v1;
-import br.com.cae.etm.tasks.user.infra.v1.UserRepository;
+package br.com.cae.etm.backend.user.application.v1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+
+import br.com.cae.etm.backend.user.infra.v1.UserRepository;
 
 
 // aqui devemos usar a annotation @Service para que fique claro que essa clasee é uma service para o projeto 
@@ -19,5 +20,3 @@ public class UserAuthorizationService implements UserDetailsService {
 		return repository.findByLogin(username);
 	}
 }
-
-

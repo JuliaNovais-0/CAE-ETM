@@ -1,4 +1,4 @@
-package br.com.cae.etm.tasks.user.domain.v1;
+package br.com.cae.etm.backend.user.domain.v1;
 import lombok.EqualsAndHashCode;
 // ATÉ ESTE MOMENTO, ESTA É UMA CLASSE COMUM JAVA 
 // MAAAAAS... PRECISAMOS TRANSFORMAR ESTA CLASSE NUMA ESTRUTURA LÓGICA ESPECIAL

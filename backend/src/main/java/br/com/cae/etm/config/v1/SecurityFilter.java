@@ -1,5 +1,4 @@
 package br.com.cae.etm.config.v1;
-import br.com.cae.etm.tasks.user.infra.v1.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,7 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import br.com.cae.etm.tasks.user.application.v1.UserTokenService;
+import br.com.cae.etm.backend.user.application.v1.UserTokenService;
+import br.com.cae.etm.backend.user.infra.v1.UserRepository;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package br.com.cae.etm.tasks.user.api.v1;
+package br.com.cae.etm.backend.user.api.v1;
 
 
 import jakarta.validation.constraints.NotBlank;

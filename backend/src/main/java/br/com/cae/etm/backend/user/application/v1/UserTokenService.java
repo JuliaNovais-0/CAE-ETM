@@ -1,5 +1,4 @@
-package br.com.cae.etm.tasks.user.application.v1;
-import br.com.cae.etm.tasks.user.domain.v1.User;
+package br.com.cae.etm.backend.user.application.v1;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -12,6 +11,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+
+import br.com.cae.etm.backend.user.domain.v1.User;
 
 // esse Service tem como proposito a definição de regras
 // para gerar o token JWT para o processo de autenticação e autorização
