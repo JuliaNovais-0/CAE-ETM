@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 // aqui devemos usar a annotation @Service para que fique claro que essa clasee é uma service para o projeto 
 @Service 
 public class UserAuthorizationService implements UserDetailsService {
-	//@Autowired -> essa annotation da a possibilidade de fazer uso de DI
-	// (Dependence Injection/ injeção de dependência), significa que tudo aquilo que esta classe vai 
-	// fazer depende do recurso que está disponível na propriedade repository
-	private final UserRepository repository;
+	private final UserRepository repository = null;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) {
