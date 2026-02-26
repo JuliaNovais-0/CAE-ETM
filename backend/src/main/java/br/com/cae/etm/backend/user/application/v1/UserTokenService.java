@@ -57,7 +57,7 @@ public class UserTokenService {
 					.verify(token)
 					.getSubject();
 		}catch(JWTVerificationException exception) {
-			return "";
+			return exception.getMessage();
 		}
 	}
 }
