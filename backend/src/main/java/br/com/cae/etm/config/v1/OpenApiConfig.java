@@ -1,51 +1,27 @@
 package br.com.cae.etm.config.v1;
 
-import io.swagger.v3.oas.models.ExternalDocumentation;
-import io.swagger.v3.oas.models.info.Contact;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.OpenAPI;
-import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration(proxyBeanMethods = false)
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 
+//Arquivo responsável por configurar o Swagger para testar os endpoints da aplicação
+
+@Configuration
 public class OpenApiConfig {
-
-  @Bean
-  OpenAPI etmOpenAPI() {
-    return new OpenAPI()
-      .info(new Info()
-        .title("ETM - Enterprise Task Manager API")
-        .version("v1")
-        .description("API para gestão de tarefas, categorias, tags e indicadores.")
-        .contact(new Contact().name("Equipe Ctrl+Alt+Elite").email("")))
-      .externalDocs(new ExternalDocumentation()
-        .description("README & DER")
-        .url(""));
-  }
-
-  @Bean
-  GroupedOpenApi tasksGroup() {
-    return GroupedOpenApi.builder()
-      .group("tasks")
-      .pathsToMatch("/api/v1/tasks/**")
-      .build();
-  }
-
-  @Bean
-  GroupedOpenApi catalogGroup() {
-    return GroupedOpenApi.builder()
-      .group("catalog")
-      .pathsToMatch("/api/v1/categories/**", "/api/v1/tags/**")
-      .build();
-  }
-
-  @Bean
-  GroupedOpenApi dashboardGroup() {
-    return GroupedOpenApi.builder()
-      .group("dashboard")
-      .pathsToMatch("/api/v1/dashboard/**")
-      .build();
-  }
+	@Bean //Annotatation para inversão de controle 
+	public OpenAPI customOpenApi() {
+		return new OpenAPI()
+				.info(new Info().title("API de autenticação - backend").version("1.0"))
+				.addSecurityItem(new SecurityRequirement().addList("bearer-key"))
+				.components(new Components().addSecuritySchemes("bearer-key",
+																	new SecurityScheme()
+																	.type(SecurityScheme.Type.HTTP)
+																	.scheme("bearer")
+																	.bearerFormat("JWT")));
+	}
 }
