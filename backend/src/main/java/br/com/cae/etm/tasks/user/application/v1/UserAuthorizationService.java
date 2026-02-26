@@ -5,7 +5,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import com.api.backend.domain.user.UserRepository;
 
 // aqui devemos usar a annotation @Service para que fique claro que essa clasee é uma service para o projeto 
 @Service 
@@ -20,3 +19,5 @@ public class UserAuthorizationService implements UserDetailsService {
 		return repository.findByLogin(username);
 	}
 }
+
+

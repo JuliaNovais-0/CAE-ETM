@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
 @RequestMapping ("/api/auth")
 public class AuthenticationController {
 	
-	//agora, precisamos definir as DIs, que serão utilizadas no controller
+	//agora, precisamos definir as D Is, que serão utilizadas no controller
 	//para este propósito, precisamos fazer uso a annotation @Autowire
 	
 	@Autowired 
