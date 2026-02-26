@@ -36,7 +36,7 @@ public class UserTokenService {
 			Algorithm algorithm = Algorithm.HMAC256(secret); //Criptografia
 			return JWT.create()
 					.withIssuer("api-backend")
-					.withSubject(user.getLogin())
+					.withSubject(user.getUsername())
 					.withExpiresAt(genExpirationDate())
 					.sign(algorithm);
 		}catch(JWTCreationException exception) {

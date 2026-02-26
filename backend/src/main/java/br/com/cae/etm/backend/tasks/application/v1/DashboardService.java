@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 
 public class DashboardService {
-    private final TaskRepository repository;
+    private final TaskRepository repository = null;
     
     public long getDelayedTasksCount() {
         return repository.countByStatusNotAndDueDateBefore(TaskStatus.DONE, java.time.LocalDateTime.now());
