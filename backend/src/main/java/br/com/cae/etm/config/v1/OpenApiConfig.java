@@ -13,10 +13,10 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @Configuration
 public class OpenApiConfig {
-	@Bean //Annotatation para inversão de controle 
+	@Bean
 	public OpenAPI customOpenApi() {
 		return new OpenAPI()
-				.info(new Info().title("API de autenticação - backend").version("1.0"))
+				.info(new Info().title("CAE-ETM API").version("1.0"))
 				.addSecurityItem(new SecurityRequirement().addList("bearer-key"))
 				.components(new Components().addSecuritySchemes("bearer-key",
 																	new SecurityScheme()
