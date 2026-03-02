@@ -1,4 +1,4 @@
-package br.com.cae.etm.controllers.v1;
+package br.com.cae.etm.backend.user.api.v1;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -7,9 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import br.com.cae.etm.backend.user.api.v1.AuthenticationDTO;
-import br.com.cae.etm.backend.user.api.v1.LoginResponseDTO;
-import br.com.cae.etm.backend.user.api.v1.RegisterDTO;
 import br.com.cae.etm.backend.user.application.v1.UserTokenService;
 import br.com.cae.etm.backend.user.domain.v1.User;
 import br.com.cae.etm.backend.user.infra.v1.UserRepository;

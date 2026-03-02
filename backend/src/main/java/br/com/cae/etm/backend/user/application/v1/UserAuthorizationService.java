@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 // aqui devemos usar a annotation @Service para que fique claro que essa clasee é uma service para o projeto 
 @Service 
 public class UserAuthorizationService implements UserDetailsService {
-	private final UserRepository repository = null;
+	private final UserRepository repository;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) {
