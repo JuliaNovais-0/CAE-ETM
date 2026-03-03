@@ -37,6 +37,9 @@ export default function CustomModal({
       ? "max-w-3xl"
       : "max-w-xl";
 
+  const modalTitle = title ?? "Modal";
+  const titleId = "custom-modal-title";
+
   return (
     <div className="fixed inset-0 z-50">
       {/* Overlay */}
@@ -52,13 +55,15 @@ export default function CustomModal({
           className={`w-full ${sizeClass} rounded-2xl bg-white shadow-xl`}
           role="dialog"
           aria-modal="true"
-          aria-label={title ?? "Modal"}
-          onClick={(e) => e.stopPropagation()} // evita fechar quando clica dentro
+          aria-labelledby={titleId}
         >
           {/* Header */}
           <div className="flex items-center justify-between border-b px-5 py-4">
-            <h2 className="text-base font-semibold text-slate-900">
-              {title ?? "Modal"}
+            <h2
+              id={titleId}
+              className="text-base font-semibold text-slate-900"
+            >
+              {modalTitle}
             </h2>
 
             <button

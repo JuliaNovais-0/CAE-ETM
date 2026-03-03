@@ -1,66 +1,180 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
 import CustomModal from "../../../shared/components/CustomModal";
+import TaskCard from "../../../shared/components/TaskCard";
+import TaskForm from "../../../shared/components/TaskForm";
+import { mockTasks } from "../mocks/mockTasks";
+
+import toast from "react-hot-toast";
+
+const STATUS_TABS = [
+  { key: "ALL", label: "Todas" },
+  { key: "PENDENTE", label: "Pendentes" },
+  { key: "EM_ANDAMENTO", label: "Em andamento" },
+  { key: "CONCLUIDA", label: "Concluídas" },
+  { key: "CANCELADA", label: "Canceladas" },
+];
+
+function countByStatus(tasks) {
+  return tasks.reduce(
+    (acc, t) => {
+      const s = t?.status ?? "PENDENTE";
+      acc[s] = (acc[s] ?? 0) + 1;
+      acc.ALL += 1;
+      return acc;
+    },
+    { ALL: 0 }
+  );
+}
+
+function nextId(tasks) {
+  const maxId = tasks.reduce((acc, t) => Math.max(acc, Number(t.id) || 0), 0);
+  return maxId + 1;
+}
 
 export default function Tasks() {
+  const [tasks, setTasks] = useState(mockTasks);
+
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const counts = useMemo(() => countByStatus(tasks), [tasks]);
+
+  const filteredTasks = useMemo(() => {
+    if (statusFilter === "ALL") return tasks;
+    return tasks.filter((t) => (t?.status ?? "PENDENTE") === statusFilter);
+  }, [tasks, statusFilter]);
+
   const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(null);
+
+  const modalTitle = useMemo(
+    () => (editing ? "Editar tarefa" : "Criar tarefa"),
+    [editing]
+  );
+
+  function closeModal() {
+    setOpen(false);
+    setEditing(null);
+  }
+
+  function openCreate() {
+    if (open) return;
+    setEditing(null);
+    setOpen(true);
+  }
+
+  function openEdit(task) {
+    if (open) return;
+    setEditing(task);
+    setOpen(true);
+  }
+
+  async function handleSubmit(values) {
+    if (editing?.id) {
+      setTasks((prev) =>
+        prev.map((t) => (t.id === editing.id ? { ...t, ...values } : t))
+      );
+      toast.success("Tarefa atualizada!");
+      closeModal();
+      return;
+    }
+
+    const newTask = { id: nextId(tasks), ...values };
+    setTasks((prev) => [newTask, ...prev]);
+    setStatusFilter("ALL");
+    toast.success("Tarefa criada!");
+    closeModal();
+  }
+
+  function handleDelete(task) {
+    const ok = window.confirm(`Excluir a tarefa "${task.title}"?`);
+    if (!ok) return;
+
+    setTasks((prev) => prev.filter((t) => t.id !== task.id));
+    toast.success("Tarefa excluída!");
+  }
 
   return (
-    <div className="space-y-4 p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Tasks</h1>
+    <div className="p-6">
+      {/* trava toda a página quando modal está aberto */}
+      <div className={`space-y-4 ${open ? "pointer-events-none select-none" : ""}`}>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Tasks</h1>
 
-        <button
-          className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
-          onClick={() => setOpen(true)}
-          type="button"
-        >
-          Nova tarefa
-        </button>
+          <button
+            className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+            onClick={openCreate}
+            type="button"
+          >
+            Nova tarefa
+          </button>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {STATUS_TABS.map((tab) => {
+            const active = statusFilter === tab.key;
+            const qty = counts[tab.key] ?? 0;
+
+            return (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setStatusFilter(tab.key)}
+                className={[
+                  "rounded-full border px-3 py-1.5 text-sm hover:bg-slate-50",
+                  active
+                    ? "border-slate-900 bg-slate-900 text-white"
+                    : "border-slate-200 bg-white text-slate-700",
+                ].join(" ")}
+              >
+                {tab.label}{" "}
+                <span
+                  className={[
+                    "ml-1 rounded-full px-2 py-0.5 text-xs",
+                    active
+                      ? "bg-white/20 text-white"
+                      : "bg-slate-100 text-slate-700",
+                  ].join(" ")}
+                >
+                  {qty}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {tasks.length === 0 ? (
+          <div className="rounded-2xl border bg-white p-6 text-sm text-slate-600">
+            Nenhuma tarefa ainda. Clique em <b>Nova tarefa</b>.
+          </div>
+        ) : filteredTasks.length === 0 ? (
+          <div className="rounded-2xl border bg-white p-6 text-sm text-slate-600">
+            Nenhuma tarefa para esse filtro.
+          </div>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2">
+            {filteredTasks.map((t) => (
+              <TaskCard
+                key={t.id}
+                title={t.title}
+                description={t.description}
+                status={t.status}
+                dueDate={t.dueDate}
+                onOpen={() => openEdit(t)}     // clique no card abre edição (opcional)
+                onEdit={() => openEdit(t)}      // botão editar
+                onDelete={() => handleDelete(t)}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
-      <CustomModal
-        open={open}
-        onClose={() => setOpen(false)}
-        title="Criar tarefa"
-        footer={
-          <>
-            <button
-              className="rounded-xl border px-4 py-2 text-sm hover:bg-slate-50"
-              onClick={() => setOpen(false)}
-              type="button"
-            >
-              Cancelar
-            </button>
-            <button
-              className="rounded-xl bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-800"
-              onClick={() => setOpen(false)}
-              type="button"
-            >
-              Salvar
-            </button>
-          </>
-        }
-      >
-        <div className="space-y-3">
-          <div>
-            <label className="text-sm font-medium text-slate-700">Título</label>
-            <input
-              className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-slate-300"
-              placeholder="Ex: Configurar TaskForm"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-slate-700">
-              Descrição
-            </label>
-            <textarea
-              className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-slate-300"
-              placeholder="O que precisa ser feito?"
-              rows={4}
-            />
-          </div>
-        </div>
+      <CustomModal open={open} onClose={closeModal} title={modalTitle}>
+        <TaskForm
+          initialValues={editing ?? undefined}
+          onCancel={closeModal}
+          onSubmit={handleSubmit}
+          submitLabel={editing ? "Atualizar" : "Criar"}
+        />
       </CustomModal>
     </div>
   );

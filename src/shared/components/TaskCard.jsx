@@ -7,9 +7,33 @@ export default function TaskCard({
   dueDate,
   onEdit,
   onDelete,
+  onOpen, // clique no card (opcional)
+  className = "",
 }) {
+  const canEdit = typeof onEdit === "function";
+  const canDelete = typeof onDelete === "function";
+  const canOpen = typeof onOpen === "function";
+
+  const stopAll = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
-    <div className="rounded-2xl border bg-white p-4 shadow-sm">
+    <div
+      className={[
+        "rounded-2xl border bg-white p-4 shadow-sm",
+        canOpen ? "cursor-pointer hover:bg-slate-50/40" : "",
+        className,
+      ].join(" ")}
+      onClick={() => onOpen?.()}
+      role={canOpen ? "button" : undefined}
+      tabIndex={canOpen ? 0 : undefined}
+      onKeyDown={(e) => {
+        if (!canOpen) return;
+        if (e.key === "Enter" || e.key === " ") onOpen?.();
+      }}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="truncate text-base font-semibold text-slate-900">
@@ -25,21 +49,34 @@ export default function TaskCard({
 
       <div className="mt-4 flex items-center justify-between">
         <div className="text-xs text-slate-500">
-          {dueDate ? `Prazo: ${dueDate}` : "Sem prazo"}
+          {dueDate ? `Prazo: ${String(dueDate)}` : "Sem prazo"}
         </div>
 
         <div className="flex gap-2">
           <button
-            className="rounded-lg border px-3 py-1.5 text-sm hover:bg-slate-50"
-            onClick={onEdit}
             type="button"
+            disabled={!canEdit}
+            className="rounded-lg border px-3 py-1.5 text-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            onClickCapture={stopAll}
+            onMouseDownCapture={stopAll}
+            onClick={(e) => {
+              stopAll(e);
+              onEdit?.();
+            }}
           >
             Editar
           </button>
+
           <button
-            className="rounded-lg border px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
-            onClick={onDelete}
             type="button"
+            disabled={!canDelete}
+            className="rounded-lg border px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+            onClickCapture={stopAll}
+            onMouseDownCapture={stopAll}
+            onClick={(e) => {
+              stopAll(e);
+              onDelete?.();
+            }}
           >
             Excluir
           </button>
