@@ -1,15 +1,12 @@
-import { Toaster } from 'react-hot-toast';
-import AppRoute from './app/router';
+// src/App.jsx
+import { Toaster } from "react-hot-toast";
+import AppRouter from "./app/router";
 
-function App() {
+export default function App() {
   return (
-    <>   
-    <AppRoute />
-    <Toaster position="top-right"/>
-    
+    <>
+      <AppRouter />
+      <Toaster position="top-right" />
     </>
-
   );
 }
-
-export default App;

@@ -5,25 +5,18 @@ const variants = {
   CANCELADA: "bg-red-100 text-red-800 border-red-200",
 };
 
-export default function StatusBadge({
-  status = "PENDENTE",
-  className = "",
-}) {
-  const safeStatus = status ?? "PENDENTE";
-
+export default function StatusBadge({ status = "PENDENTE" }) {
   const cls =
-    variants[safeStatus] ??
-    "bg-slate-100 text-slate-700 border-slate-200";
+    variants[status] ?? "bg-slate-100 text-slate-700 border-slate-200";
 
-  const label = safeStatus
-    .toString()
+  const label = status
     .replaceAll("_", " ")
     .toLowerCase()
     .replace(/^./, (c) => c.toUpperCase());
 
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium ${cls} ${className}`}
+      className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium ${cls}`}
     >
       {label}
     </span>

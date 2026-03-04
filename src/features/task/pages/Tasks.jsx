@@ -1,11 +1,10 @@
 import { useMemo, useState } from "react";
+import toast from "react-hot-toast";
 
 import CustomModal from "../../../shared/components/CustomModal";
 import TaskCard from "../../../shared/components/TaskCard";
 import TaskForm from "../../../shared/components/TaskForm";
 import { mockTasks } from "../mocks/mockTasks";
-
-import toast from "react-hot-toast";
 
 const STATUS_TABS = [
   { key: "ALL", label: "Todas" },
@@ -35,21 +34,19 @@ function nextId(tasks) {
 export default function Tasks() {
   const [tasks, setTasks] = useState(mockTasks);
 
-  const [statusFilter, setStatusFilter] = useState("ALL");
-  const counts = useMemo(() => countByStatus(tasks), [tasks]);
-
-  const filteredTasks = useMemo(() => {
-    if (statusFilter === "ALL") return tasks;
-    return tasks.filter((t) => (t?.status ?? "PENDENTE") === statusFilter);
-  }, [tasks, statusFilter]);
+  const [activeTab, setActiveTab] = useState("ALL");
 
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
 
-  const modalTitle = useMemo(
-    () => (editing ? "Editar tarefa" : "Criar tarefa"),
-    [editing]
-  );
+  const counts = useMemo(() => countByStatus(tasks), [tasks]);
+
+  const filtered = useMemo(() => {
+    if (activeTab === "ALL") return tasks;
+    return tasks.filter((t) => t.status === activeTab);
+  }, [tasks, activeTab]);
+
+  const modalTitle = editing ? "Editar tarefa" : "Criar tarefa";
 
   function closeModal() {
     setOpen(false);
@@ -57,13 +54,11 @@ export default function Tasks() {
   }
 
   function openCreate() {
-    if (open) return;
     setEditing(null);
     setOpen(true);
   }
 
   function openEdit(task) {
-    if (open) return;
     setEditing(task);
     setOpen(true);
   }
@@ -80,7 +75,6 @@ export default function Tasks() {
 
     const newTask = { id: nextId(tasks), ...values };
     setTasks((prev) => [newTask, ...prev]);
-    setStatusFilter("ALL");
     toast.success("Tarefa criada!");
     closeModal();
   }
@@ -94,81 +88,75 @@ export default function Tasks() {
   }
 
   return (
-    <div className="p-6">
-      {/* trava toda a página quando modal está aberto */}
-      <div className={`space-y-4 ${open ? "pointer-events-none select-none" : ""}`}>
-        <div className="flex items-center justify-between">
+    <div className="space-y-5 p-6">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-3">
+        <div>
           <h1 className="text-2xl font-bold">Tasks</h1>
-
-          <button
-            className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
-            onClick={openCreate}
-            type="button"
-          >
-            Nova tarefa
-          </button>
+          <p className="text-sm text-slate-600">Total: {counts.ALL ?? 0}</p>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {STATUS_TABS.map((tab) => {
-            const active = statusFilter === tab.key;
-            const qty = counts[tab.key] ?? 0;
-
-            return (
-              <button
-                key={tab.key}
-                type="button"
-                onClick={() => setStatusFilter(tab.key)}
-                className={[
-                  "rounded-full border px-3 py-1.5 text-sm hover:bg-slate-50",
-                  active
-                    ? "border-slate-900 bg-slate-900 text-white"
-                    : "border-slate-200 bg-white text-slate-700",
-                ].join(" ")}
-              >
-                {tab.label}{" "}
-                <span
-                  className={[
-                    "ml-1 rounded-full px-2 py-0.5 text-xs",
-                    active
-                      ? "bg-white/20 text-white"
-                      : "bg-slate-100 text-slate-700",
-                  ].join(" ")}
-                >
-                  {qty}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {tasks.length === 0 ? (
-          <div className="rounded-2xl border bg-white p-6 text-sm text-slate-600">
-            Nenhuma tarefa ainda. Clique em <b>Nova tarefa</b>.
-          </div>
-        ) : filteredTasks.length === 0 ? (
-          <div className="rounded-2xl border bg-white p-6 text-sm text-slate-600">
-            Nenhuma tarefa para esse filtro.
-          </div>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2">
-            {filteredTasks.map((t) => (
-              <TaskCard
-                key={t.id}
-                title={t.title}
-                description={t.description}
-                status={t.status}
-                dueDate={t.dueDate}
-                onOpen={() => openEdit(t)}     // clique no card abre edição (opcional)
-                onEdit={() => openEdit(t)}      // botão editar
-                onDelete={() => handleDelete(t)}
-              />
-            ))}
-          </div>
-        )}
+        <button
+          className="rounded-2xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-800"
+          onClick={openCreate}
+          type="button"
+        >
+          Nova tarefa
+        </button>
       </div>
 
-      <CustomModal open={open} onClose={closeModal} title={modalTitle}>
+      {/* Tabs / Filtros */}
+      <div className="flex flex-wrap gap-2">
+        {STATUS_TABS.map((tab) => {
+          const isActive = activeTab === tab.key;
+          const pill =
+            isActive
+              ? "bg-slate-900 text-white"
+              : "bg-white text-slate-700 hover:bg-slate-50 border";
+
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setActiveTab(tab.key)}
+              className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm ${pill}`}
+            >
+              <span>{tab.label}</span>
+              <span
+                className={`inline-flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs ${
+                  isActive ? "bg-white/15" : "bg-slate-100"
+                }`}
+              >
+                {counts[tab.key] ?? 0}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Lista */}
+      {filtered.length === 0 ? (
+        <div className="rounded-2xl border bg-white p-6 text-sm text-slate-600">
+          Nenhuma tarefa nesse filtro.
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2">
+          {filtered.map((t) => (
+            <TaskCard
+              key={t.id}
+              title={t.title}
+              description={t.description}
+              status={t.status}
+              dueDate={t.dueDate}
+              onEdit={() => openEdit(t)}
+              onDelete={() => handleDelete(t)}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Modal + Form (ATENÇÃO: aqui dentro é SÓ TaskForm) */}
+      <CustomModal open={open} onClose={closeModal} title={modalTitle} size="lg">
         <TaskForm
           initialValues={editing ?? undefined}
           onCancel={closeModal}

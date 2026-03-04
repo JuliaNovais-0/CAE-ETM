@@ -8,7 +8,6 @@ export default function CustomModal({
   footer,
   size = "md", // "sm" | "md" | "lg"
 }) {
-  // Fechar com ESC + travar scroll
   useEffect(() => {
     if (!open) return;
 
@@ -18,7 +17,6 @@ export default function CustomModal({
 
     document.addEventListener("keydown", onKeyDown);
 
-    // trava scroll do body
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
@@ -31,22 +29,21 @@ export default function CustomModal({
   if (!open) return null;
 
   const sizeClass =
-    size === "sm"
-      ? "max-w-md"
-      : size === "lg"
-      ? "max-w-3xl"
-      : "max-w-xl";
+    size === "sm" ? "max-w-md" : size === "lg" ? "max-w-3xl" : "max-w-xl";
 
   const modalTitle = title ?? "Modal";
-  const titleId = "custom-modal-title";
 
   return (
     <div className="fixed inset-0 z-50">
       {/* Overlay */}
-      <div
+      <button
+        type="button"
         className="absolute inset-0 bg-black/50"
-        onClick={onClose}
-        aria-hidden="true"
+        onClick={(e) => {
+          e.stopPropagation();
+          onClose?.();
+        }}
+        aria-label="Fechar modal"
       />
 
       {/* Modal */}
@@ -55,14 +52,12 @@ export default function CustomModal({
           className={`w-full ${sizeClass} rounded-2xl bg-white shadow-xl`}
           role="dialog"
           aria-modal="true"
-          aria-labelledby={titleId}
+          aria-label={modalTitle}
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div className="flex items-center justify-between border-b px-5 py-4">
-            <h2
-              id={titleId}
-              className="text-base font-semibold text-slate-900"
-            >
+            <h2 className="text-base font-semibold text-slate-900">
               {modalTitle}
             </h2>
 
@@ -79,7 +74,7 @@ export default function CustomModal({
           {/* Body */}
           <div className="px-5 py-4">{children}</div>
 
-          {/* Footer (opcional) */}
+          {/* Footer */}
           {footer ? (
             <div className="flex items-center justify-end gap-2 border-t px-5 py-4">
               {footer}
