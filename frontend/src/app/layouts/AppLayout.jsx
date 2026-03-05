@@ -25,7 +25,7 @@ export default function AppLayout() {
           </div>
 
           <nav className="flex items-center gap-2">
-            <NavLink to="/" className={linkClass} end>
+            <NavLink to="/dashboard" className={linkClass}>
               Dashboard
             </NavLink>
             <NavLink to="/tasks" className={linkClass}>

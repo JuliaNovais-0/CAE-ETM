@@ -32,6 +32,7 @@ export default function AppRouter() {
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<AppLayout />}>
             <Route index element={<Dashboard />} />
+            <Route path="dashboard" element={<Dashboard />} />
             <Route path="tasks" element={<Tasks />} />
           </Route>
         </Route>
