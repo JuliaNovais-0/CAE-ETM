@@ -1,23 +1,25 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 import CustomModal from "../../../shared/components/CustomModal";
 import TaskCard from "../../../shared/components/TaskCard";
 import TaskForm from "../../../shared/components/TaskForm";
-import { mockTasks } from "../mocks/mockTasks";
+import { fetchTasks, createTask, updateTask, deleteTask } from "../services/taskApi";
+import { fetchUsers } from "../services/userApi";
+import { http } from "../../../app/api/http";
 
 const STATUS_TABS = [
   { key: "ALL", label: "Todas" },
-  { key: "PENDENTE", label: "Pendentes" },
-  { key: "EM_ANDAMENTO", label: "Em andamento" },
-  { key: "CONCLUIDA", label: "Concluídas" },
-  { key: "CANCELADA", label: "Canceladas" },
+  { key: "TODO", label: "A Fazer" },
+  { key: "DOING", label: "Em andamento" },
+  { key: "DONE", label: "Concluídas" },
+  { key: "BLOCKED", label: "Bloqueadas" },
 ];
 
 function countByStatus(tasks) {
   return tasks.reduce(
     (acc, t) => {
-      const s = t?.status ?? "PENDENTE";
+      const s = t?.status ?? "TODO";
       acc[s] = (acc[s] ?? 0) + 1;
       acc.ALL += 1;
       return acc;
@@ -26,18 +28,44 @@ function countByStatus(tasks) {
   );
 }
 
-function nextId(tasks) {
-  const maxId = tasks.reduce((acc, t) => Math.max(acc, Number(t.id) || 0), 0);
-  return maxId + 1;
-}
-
 export default function Tasks() {
-  const [tasks, setTasks] = useState(mockTasks);
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]);
 
   const [activeTab, setActiveTab] = useState("ALL");
 
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+
+  // Carrega tasks do backend
+  const loadTasks = useCallback(async () => {
+    try {
+      setLoading(true);
+      const page = await fetchTasks();
+      setTasks(page.content ?? []);
+    } catch (err) {
+      toast.error("Erro ao carregar tarefas");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Carrega lista de usuários para atribuição
+  const loadUsers = useCallback(async () => {
+    try {
+      const data = await fetchUsers();
+      setUsers(data);
+    } catch (err) {
+      console.error("Erro ao carregar usuários", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadTasks();
+    loadUsers();
+  }, [loadTasks, loadUsers]);
 
   const counts = useMemo(() => countByStatus(tasks), [tasks]);
 
@@ -59,32 +87,47 @@ export default function Tasks() {
   }
 
   function openEdit(task) {
-    setEditing(task);
+    // Converter dueDate de "2026-03-05T00:00:00" para "2026-03-05" para o input date
+    const dueDate = task.dueDate ? task.dueDate.substring(0, 10) : "";
+    // Extrair IDs dos assignees para o form
+    const assigneeIds = (task.assignee ?? []).map((u) => u.id);
+    setEditing({ ...task, dueDate, assigneeIds });
     setOpen(true);
   }
 
   async function handleSubmit(values) {
-    if (editing?.id) {
-      setTasks((prev) =>
-        prev.map((t) => (t.id === editing.id ? { ...t, ...values } : t))
-      );
-      toast.success("Tarefa atualizada!");
+    try {
+      if (editing?.id) {
+        await updateTask(editing.id, values);
+        toast.success("Tarefa atualizada!");
+      } else {
+        await createTask(values);
+        toast.success("Tarefa criada!");
+      }
       closeModal();
-      return;
+      await loadTasks(); // Recarrega do backend
+    } catch (err) {
+      toast.error("Erro ao salvar tarefa");
+      console.error(err);
     }
-
-    const newTask = { id: nextId(tasks), ...values };
-    setTasks((prev) => [newTask, ...prev]);
-    toast.success("Tarefa criada!");
-    closeModal();
   }
 
-  function handleDelete(task) {
+  async function handleDelete(task) {
+    if (!task?.id) return;
     const ok = window.confirm(`Excluir a tarefa "${task.title}"?`);
     if (!ok) return;
 
-    setTasks((prev) => prev.filter((t) => t.id !== task.id));
-    toast.success("Tarefa excluída!");
+    try {
+      await http.delete(`/api/tasks/${task.id}`);
+      // Remove da lista local imediatamente
+      setTasks((prev) => prev.filter((t) => t.id !== task.id));
+      toast.success("Tarefa excluída!");
+    } catch (err) {
+      toast.error("Erro ao excluir tarefa");
+      console.error("DELETE error:", err);
+      // Recarrega para garantir consistência
+      await loadTasks();
+    }
   }
 
   return (
@@ -135,7 +178,11 @@ export default function Tasks() {
       </div>
 
       {/* Lista */}
-      {filtered.length === 0 ? (
+      {loading ? (
+        <div className="rounded-2xl border bg-white p-6 text-center text-sm text-slate-500">
+          Carregando tarefas...
+        </div>
+      ) : filtered.length === 0 ? (
         <div className="rounded-2xl border bg-white p-6 text-sm text-slate-600">
           Nenhuma tarefa nesse filtro.
         </div>
@@ -147,7 +194,11 @@ export default function Tasks() {
               title={t.title}
               description={t.description}
               status={t.status}
+              priority={t.priority}
+              category={t.category}
               dueDate={t.dueDate}
+              createdBy={t.createdBy?.login}
+              assignees={t.assignee ?? []}
               onEdit={() => openEdit(t)}
               onDelete={() => handleDelete(t)}
             />
@@ -162,6 +213,7 @@ export default function Tasks() {
           onCancel={closeModal}
           onSubmit={handleSubmit}
           submitLabel={editing ? "Atualizar" : "Criar"}
+          users={users}
         />
       </CustomModal>
     </div>

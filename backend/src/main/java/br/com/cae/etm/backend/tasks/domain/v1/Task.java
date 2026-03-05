@@ -61,6 +61,10 @@ public class Task {
     )
     private List<User> assignee = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
+
     // Soft Delete
     @Column(nullable = false)
     private boolean deleted = false;

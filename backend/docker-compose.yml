@@ -1,6 +1,7 @@
 services:
   backend:
     build: .
+    container_name: cae-etm-backend
     ports:
       - "8080:8080"
     environment:

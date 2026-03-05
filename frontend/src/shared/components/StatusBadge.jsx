@@ -1,18 +1,22 @@
 const variants = {
-  PENDENTE: "bg-yellow-100 text-yellow-800 border-yellow-200",
-  EM_ANDAMENTO: "bg-blue-100 text-blue-800 border-blue-200",
-  CONCLUIDA: "bg-green-100 text-green-800 border-green-200",
-  CANCELADA: "bg-red-100 text-red-800 border-red-200",
+  TODO: "bg-yellow-100 text-yellow-800 border-yellow-200",
+  DOING: "bg-blue-100 text-blue-800 border-blue-200",
+  DONE: "bg-green-100 text-green-800 border-green-200",
+  BLOCKED: "bg-red-100 text-red-800 border-red-200",
 };
 
-export default function StatusBadge({ status = "PENDENTE" }) {
+const labels = {
+  TODO: "A Fazer",
+  DOING: "Em andamento",
+  DONE: "Concluída",
+  BLOCKED: "Bloqueada",
+};
+
+export default function StatusBadge({ status = "TODO" }) {
   const cls =
     variants[status] ?? "bg-slate-100 text-slate-700 border-slate-200";
 
-  const label = status
-    .replaceAll("_", " ")
-    .toLowerCase()
-    .replace(/^./, (c) => c.toUpperCase());
+  const label = labels[status] ?? status;
 
   return (
     <span

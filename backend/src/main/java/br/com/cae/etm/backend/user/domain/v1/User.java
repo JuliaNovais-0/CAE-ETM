@@ -12,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,8 @@ public class User implements UserDetails{
 	
 	private String id;
 	private String login;
+
+	@JsonIgnore
 	private String password;
 	
 	public User(String login, String password) {
@@ -44,34 +47,41 @@ public class User implements UserDetails{
 	@Override
 	// a ? é um optional element, estamos dizendo que o método pode retornar uma
 	//coleção de objetos quaisquer 
+	@JsonIgnore
 	public Collection<? extends GrantedAuthority> getAuthorities(){
 		return List.of(new SimpleGrantedAuthority("ROLE_USER"));
 	}
 	
+	@JsonIgnore
 	public String getUsername() {
 		return login;
 	}
 	
+	@JsonIgnore
 	public String getPassword() {
 		return password;
 	}
 	
 	@Override
+	@JsonIgnore
 	public boolean isAccountNonExpired() {
 		return true;
 	}
 	
 	@Override
+	@JsonIgnore
 	public boolean isAccountNonLocked() {
 		return true;
 	}
 	
 	@Override
+	@JsonIgnore
 	public boolean isCredentialsNonExpired() {
 		return true;
 	}
 	
 	@Override
+	@JsonIgnore
 	public boolean isEnabled() {
 		return true;
 	}

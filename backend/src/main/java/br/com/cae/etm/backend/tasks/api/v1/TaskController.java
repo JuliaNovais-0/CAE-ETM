@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import br.com.cae.etm.backend.tasks.domain.v1.Tag;
@@ -17,6 +18,7 @@ import br.com.cae.etm.backend.tasks.domain.v1.TaskPriority;
 import br.com.cae.etm.backend.tasks.domain.v1.TaskStatus;
 import br.com.cae.etm.backend.tasks.infra.v1.TagRepository;
 import br.com.cae.etm.backend.tasks.infra.v1.TaskRepository;
+import br.com.cae.etm.backend.user.domain.v1.User;
 import br.com.cae.etm.backend.user.infra.v1.UserRepository;
 import jakarta.validation.Valid;
 
@@ -37,6 +39,12 @@ public class TaskController {
     public ResponseEntity create(@RequestBody @Valid CreateTaskDTO dto) {
         Task task = new Task(dto.title(), dto.description(), dto.status(),
                             dto.priority(), dto.category(), dto.dueDate());
+
+        // Set createdBy from authenticated user
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof User loggedUser) {
+            task.setCreatedBy(loggedUser);
+        }
 
         if (dto.tags() != null) {
             List<Tag> tags = new ArrayList<>();

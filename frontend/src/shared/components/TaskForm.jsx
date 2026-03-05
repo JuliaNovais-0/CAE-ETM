@@ -6,19 +6,38 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const taskSchema = z.object({
   title: z.string().min(3, "Título precisa ter pelo menos 3 caracteres"),
   description: z.string().min(3, "Descrição precisa ter pelo menos 3 caracteres"),
-  status: z.enum(["PENDENTE", "EM_ANDAMENTO", "CONCLUIDA", "CANCELADA"]),
+  status: z.enum(["TODO", "DOING", "DONE", "BLOCKED"]),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
+  category: z.string().min(1, "Categoria é obrigatória"),
   dueDate: z
     .string()
     .optional()
     .or(z.literal(""))
     .transform((v) => (v ? v : undefined)),
+  assigneeIds: z.array(z.string()).optional(),
 });
 
 const STATUS_OPTIONS = [
-  { value: "PENDENTE", label: "Pendente" },
-  { value: "EM_ANDAMENTO", label: "Em andamento" },
-  { value: "CONCLUIDA", label: "Concluída" },
-  { value: "CANCELADA", label: "Cancelada" },
+  { value: "TODO", label: "A Fazer" },
+  { value: "DOING", label: "Em andamento" },
+  { value: "DONE", label: "Concluída" },
+  { value: "BLOCKED", label: "Bloqueada" },
+];
+
+const PRIORITY_OPTIONS = [
+  { value: "LOW", label: "Baixa" },
+  { value: "MEDIUM", label: "Média" },
+  { value: "HIGH", label: "Alta" },
+  { value: "CRITICAL", label: "Crítica" },
+];
+
+const CATEGORY_OPTIONS = [
+  "Desenvolvimento",
+  "Design",
+  "Documentação",
+  "Bug",
+  "Infraestrutura",
+  "Outro",
 ];
 
 export default function TaskForm({
@@ -26,13 +45,17 @@ export default function TaskForm({
   onSubmit,
   onCancel,
   submitLabel = "Salvar",
+  users = [],  // [{ id, login }]
 }) {
   const defaultValues = useMemo(
     () => ({
       title: initialValues?.title ?? "",
       description: initialValues?.description ?? "",
-      status: initialValues?.status ?? "PENDENTE",
+      status: initialValues?.status ?? "TODO",
+      priority: initialValues?.priority ?? "MEDIUM",
+      category: initialValues?.category ?? "",
       dueDate: initialValues?.dueDate ?? "",
+      assigneeIds: initialValues?.assigneeIds ?? [],
     }),
     [initialValues]
   );
@@ -41,6 +64,8 @@ export default function TaskForm({
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(taskSchema),
@@ -48,10 +73,21 @@ export default function TaskForm({
     mode: "onBlur",
   });
 
+  const selectedAssignees = watch("assigneeIds") ?? [];
+
   // sempre que trocar initialValues (editar outra task), reseta o form
   useEffect(() => {
     reset(defaultValues);
   }, [defaultValues, reset]);
+
+  function toggleAssignee(userId) {
+    const current = selectedAssignees;
+    if (current.includes(userId)) {
+      setValue("assigneeIds", current.filter((id) => id !== userId));
+    } else {
+      setValue("assigneeIds", [...current, userId]);
+    }
+  }
 
   return (
     <form
@@ -102,6 +138,41 @@ export default function TaskForm({
         </div>
 
         <div>
+          <label className="block text-sm font-medium text-slate-700">Prioridade</label>
+          <select
+            {...register("priority")}
+            className="mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+          >
+            {PRIORITY_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+          {errors.priority?.message ? (
+            <p className="mt-1 text-xs text-red-600">{errors.priority.message}</p>
+          ) : null}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700">Categoria</label>
+          <select
+            {...register("category")}
+            className="mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+          >
+            <option value="">Selecione...</option>
+            {CATEGORY_OPTIONS.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+          {errors.category?.message ? (
+            <p className="mt-1 text-xs text-red-600">{errors.category.message}</p>
+          ) : null}
+        </div>
+
+        <div>
           <label className="block text-sm font-medium text-slate-700">Prazo</label>
           <input
             {...register("dueDate")}
@@ -113,6 +184,34 @@ export default function TaskForm({
           ) : null}
         </div>
       </div>
+
+      {/* Atribuir a usuários */}
+      {users.length > 0 && (
+        <div>
+          <label className="block text-sm font-medium text-slate-700">
+            Atribuir a
+          </label>
+          <div className="mt-1 flex flex-wrap gap-2">
+            {users.map((u) => {
+              const selected = selectedAssignees.includes(u.id);
+              return (
+                <button
+                  key={u.id}
+                  type="button"
+                  onClick={() => toggleAssignee(u.id)}
+                  className={`rounded-full px-3 py-1 text-sm border transition ${
+                    selected
+                      ? "bg-slate-900 text-white border-slate-900"
+                      : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                  }`}
+                >
+                  {u.login}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="flex items-center justify-end gap-2 pt-2">
         <button
