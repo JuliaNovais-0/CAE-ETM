@@ -13,13 +13,12 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
-      // Exemplo: proxiar todas as rotas /api para o backend
-      // '/api': {
-      //   target: 'http://localhost:8080',
-      //   changeOrigin: true,
-      //   secure: false,
-      //   rewrite: (path) => path.replace(/^\/api/, ''),
-      // },
+      // Proxiar todas as rotas /api para o backend
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false,
+      },
     }
   },
 })
