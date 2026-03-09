@@ -55,7 +55,7 @@ public class AuthenticationController {
 		
 		this.repository.save(novoUser);
 		
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(new RegisterResponseDTO(dadosCadastro.login(), encryptedPassword));
 	}
 	
 	// definir o método que irá enviar - requisição HTTP POST - os dados do uauário para a

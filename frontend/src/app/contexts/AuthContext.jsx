@@ -21,6 +21,13 @@ export function AuthProvider({ children }) {
   async function login({ login, password }) {
     try {
       const data = await loginRequest({ login, password });
+
+      console.log("%c=== LOGIN DE USUÁRIO ===", "color: #22c55e; font-weight: bold; font-size: 14px");
+      console.log("%cUsuário: %c" + login, "color: #94a3b8", "color: #fff; font-weight: bold");
+      console.log("%cToken JWT (senha criptografada no servidor):", "color: #94a3b8");
+      console.log("%c" + data.token, "color: #60a5fa; font-size: 11px; word-break: break-all");
+      console.log("%c========================", "color: #22c55e; font-weight: bold");
+
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", login);
       setUser(login);
@@ -38,7 +45,14 @@ export function AuthProvider({ children }) {
 
   async function register({ login, password }) {
     try {
-      await registerRequest({ login, password });
+      const data = await registerRequest({ login, password });
+
+      console.log("%c=== CADASTRO DE USUÁRIO ===", "color: #a855f7; font-weight: bold; font-size: 14px");
+      console.log("%cUsuário: %c" + login, "color: #94a3b8", "color: #fff; font-weight: bold");
+      console.log("%cSenha criptografada (BCrypt):", "color: #94a3b8");
+      console.log("%c" + data.encryptedPassword, "color: #f59e0b; font-size: 11px");
+      console.log("%c===========================", "color: #a855f7; font-weight: bold");
+
       toastSuccess("Cadastro realizado! Faça login.");
       return true;
     } catch (err) {
