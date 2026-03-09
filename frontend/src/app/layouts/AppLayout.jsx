@@ -129,10 +129,6 @@ export default function AppLayout() {
 
   return (
     <div className="relative min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50">
-      {/* Theme toggle – canto fixo */}
-      <div className="fixed right-4 top-4 z-50">
-        <ThemeToggle />
-      </div>
 
       {/* Top bar */}
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-950/60">
@@ -171,6 +167,9 @@ export default function AppLayout() {
           </div>
 
           <div className="flex items-center gap-2">
+
+            {/* Theme toggle */}
+            <ThemeToggle />
 
             {/* User info */}
             <div className="hidden sm:flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
