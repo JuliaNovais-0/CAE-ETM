@@ -40,17 +40,16 @@ function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      className={cx(
-        "inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition",
-        "border border-slate-200 bg-white hover:bg-slate-50",
-        "dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800",
-        "focus:outline-none focus:ring-2 focus:ring-slate-900/15 dark:focus:ring-white/15"
-      )}
+      className="rounded-full p-2.5 text-slate-500 transition
+        hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-800"
       aria-label="Alternar tema"
       title="Alternar tema"
     >
-      <span className="text-base">{isDark ? "🌙" : "☀️"}</span>
-      <span className="hidden sm:inline">{isDark ? "Dark" : "Light"}</span>
+      {isDark ? (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      ) : (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      )}
     </button>
   );
 }
@@ -129,7 +128,12 @@ export default function AppLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50">
+    <div className="relative min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50">
+      {/* Theme toggle – canto fixo */}
+      <div className="fixed right-4 top-4 z-50">
+        <ThemeToggle />
+      </div>
+
       {/* Top bar */}
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-950/60">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6">
@@ -167,7 +171,6 @@ export default function AppLayout() {
           </div>
 
           <div className="flex items-center gap-2">
-            <ThemeToggle />
 
             {/* User info */}
             <div className="hidden sm:flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
@@ -274,9 +277,6 @@ export default function AppLayout() {
 
             <SidebarNav />
 
-            <div className="mt-6">
-              <ThemeToggle />
-            </div>
           </div>
         </div>
       ) : null}

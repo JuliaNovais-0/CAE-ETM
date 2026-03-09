@@ -10,5 +10,6 @@ public record DashboardStatsDTO(
     long blockedCount,
     long delayedCount,
     double delayedPercentage,
-    Map<String, Long> countByCategory
+    Map<String, Long> countByCategory,
+    Map<String, Long> countByPriority
 ) {}

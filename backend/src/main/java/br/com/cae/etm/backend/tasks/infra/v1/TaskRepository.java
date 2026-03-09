@@ -42,4 +42,8 @@ public interface TaskRepository extends JpaRepository<Task, String> {
     // Contagem por categoria
     @Query("SELECT t.category, COUNT(t) FROM tasks t WHERE t.deleted = false GROUP BY t.category")
     List<Object[]> countByCategory();
+
+    // Contagem por prioridade
+    @Query("SELECT t.priority, COUNT(t) FROM tasks t WHERE t.deleted = false GROUP BY t.priority")
+    List<Object[]> countByPriority();
 }

@@ -36,6 +36,12 @@ public class DashboardService {
             countByCategory.put((String) row[0], (Long) row[1]);
         }
 
+        Map<String, Long> countByPriority = new LinkedHashMap<>();
+        List<Object[]> priorityResults = repository.countByPriority();
+        for (Object[] row : priorityResults) {
+            countByPriority.put(row[0].toString(), (Long) row[1]);
+        }
+
         return new DashboardStatsDTO(
             total,
             todoCount,
@@ -44,7 +50,8 @@ public class DashboardService {
             blockedCount,
             delayedCount,
             Math.round(delayedPercentage * 100.0) / 100.0,
-            countByCategory
+            countByCategory,
+            countByPriority
         );
     }
 }

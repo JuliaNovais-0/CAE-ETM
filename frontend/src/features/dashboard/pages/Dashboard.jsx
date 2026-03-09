@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchDashboardStats } from "../services/dashboardApi";
+import PieChart from "../../../shared/components/PieChart";
 
 const STAT_CARDS = [
   { key: "totalTasks", label: "Total", icon: "📋", color: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200" },
@@ -38,6 +39,22 @@ export default function Dashboard() {
   }
 
   const categories = stats.countByCategory ?? {};
+
+  const priorities = stats.countByPriority ?? {};
+  const PRIORITY_CHART_CONFIG = {
+    LOW:      { label: "Baixa",   color: "#94a3b8" }, // slate-400
+    MEDIUM:   { label: "Média",   color: "#3b82f6" }, // blue-500
+    HIGH:     { label: "Alta",    color: "#f97316" }, // orange-500
+    CRITICAL: { label: "Crítica", color: "#ef4444" }, // red-500
+  };
+
+  const priorityChartData = Object.entries(priorities)
+    .filter(([, count]) => count > 0)
+    .map(([key, count]) => ({
+      label: PRIORITY_CHART_CONFIG[key]?.label ?? key,
+      value: count,
+      color: PRIORITY_CHART_CONFIG[key]?.color ?? "#64748b",
+    }));
 
   return (
     <div className="space-y-6 p-6">
@@ -82,38 +99,51 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Categorias */}
-      {Object.keys(categories).length > 0 && (
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
-          <h2 className="mb-4 text-base font-semibold text-slate-900 dark:text-white">
-            Tarefas por Categoria
-          </h2>
-          <div className="space-y-3">
-            {Object.entries(categories).map(([cat, count]) => (
-              <div key={cat} className="flex items-center justify-between">
-                <span className="text-sm text-slate-700 dark:text-slate-300">{cat}</span>
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-24 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                    <div
-                      className="h-full rounded-full bg-slate-700 dark:bg-slate-400 transition-all"
-                      style={{
-                        width: `${
-                          stats.totalTasks > 0
-                            ? (count / stats.totalTasks) * 100
-                            : 0
-                        }%`,
-                      }}
-                    />
+      {/* Categorias + Prioridades lado a lado */}
+      <div className="grid gap-4 lg:grid-cols-2">
+        {/* Categorias */}
+        {Object.keys(categories).length > 0 && (
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
+            <h2 className="mb-4 text-base font-semibold text-slate-900 dark:text-white">
+              Tarefas por Categoria
+            </h2>
+            <div className="space-y-3">
+              {Object.entries(categories).map(([cat, count]) => (
+                <div key={cat} className="flex items-center justify-between">
+                  <span className="text-sm text-slate-700 dark:text-slate-300">{cat}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-24 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                      <div
+                        className="h-full rounded-full bg-slate-700 dark:bg-slate-400 transition-all"
+                        style={{
+                          width: `${
+                            stats.totalTasks > 0
+                              ? (count / stats.totalTasks) * 100
+                              : 0
+                          }%`,
+                        }}
+                      />
+                    </div>
+                    <span className="min-w-[2rem] text-right text-sm font-semibold text-slate-900 dark:text-white">
+                      {count}
+                    </span>
                   </div>
-                  <span className="min-w-[2rem] text-right text-sm font-semibold text-slate-900 dark:text-white">
-                    {count}
-                  </span>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Gráfico de pizza — Prioridades */}
+        {priorityChartData.length > 0 && (
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
+            <h2 className="mb-5 text-base font-semibold text-slate-900 dark:text-white">
+              Tarefas por Prioridade
+            </h2>
+            <PieChart data={priorityChartData} size={200} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
