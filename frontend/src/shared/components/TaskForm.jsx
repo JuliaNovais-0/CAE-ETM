@@ -95,10 +95,10 @@ export default function TaskForm({
       className="space-y-4"
     >
       <div>
-        <label className="block text-sm font-medium text-slate-700">Título</label>
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Título</label>
         <input
           {...register("title")}
-          className="mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+          className="mt-1 w-full rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300 dark:focus:ring-slate-600 bg-white dark:bg-slate-800 dark:text-white"
           placeholder="Ex: Criar TaskForm"
         />
         {errors.title?.message ? (
@@ -107,11 +107,11 @@ export default function TaskForm({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700">Descrição</label>
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Descrição</label>
         <textarea
           {...register("description")}
           rows={3}
-          className="mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+          className="mt-1 w-full rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300 dark:focus:ring-slate-600 bg-white dark:bg-slate-800 dark:text-white"
           placeholder="Ex: Form com React Hook Form + Zod no modal."
         />
         {errors.description?.message ? (
@@ -121,10 +121,10 @@ export default function TaskForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-slate-700">Status</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Status</label>
           <select
             {...register("status")}
-            className="mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+            className="mt-1 w-full rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300 dark:focus:ring-slate-600 bg-white dark:bg-slate-800 dark:text-white"
           >
             {STATUS_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -138,10 +138,10 @@ export default function TaskForm({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700">Prioridade</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Prioridade</label>
           <select
             {...register("priority")}
-            className="mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+            className="mt-1 w-full rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300 dark:focus:ring-slate-600 bg-white dark:bg-slate-800 dark:text-white"
           >
             {PRIORITY_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -155,10 +155,10 @@ export default function TaskForm({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700">Categoria</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Categoria</label>
           <select
             {...register("category")}
-            className="mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+            className="mt-1 w-full rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300 dark:focus:ring-slate-600 bg-white dark:bg-slate-800 dark:text-white"
           >
             <option value="">Selecione...</option>
             {CATEGORY_OPTIONS.map((c) => (
@@ -173,11 +173,11 @@ export default function TaskForm({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700">Prazo</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Prazo</label>
           <input
             {...register("dueDate")}
             type="date"
-            className="mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+            className="mt-1 w-full rounded-xl border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300 dark:focus:ring-slate-600 bg-white dark:bg-slate-800 dark:text-white"
           />
           {errors.dueDate?.message ? (
             <p className="mt-1 text-xs text-red-600">{errors.dueDate.message}</p>
@@ -188,7 +188,7 @@ export default function TaskForm({
       {/* Atribuir a usuários */}
       {users.length > 0 && (
         <div>
-          <label className="block text-sm font-medium text-slate-700">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
             Atribuir a
           </label>
           <div className="mt-1 flex flex-wrap gap-2">
@@ -201,8 +201,8 @@ export default function TaskForm({
                   onClick={() => toggleAssignee(u.id)}
                   className={`rounded-full px-3 py-1 text-sm border transition ${
                     selected
-                      ? "bg-slate-900 text-white border-slate-900"
-                      : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                      ? "bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-slate-900 dark:border-white"
+                      : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700"
                   }`}
                 >
                   {u.login}
@@ -217,7 +217,7 @@ export default function TaskForm({
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-xl border px-4 py-2 text-sm hover:bg-slate-50"
+          className="rounded-xl border border-slate-300 dark:border-slate-700 px-4 py-2 text-sm hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
         >
           Cancelar
         </button>
@@ -225,7 +225,7 @@ export default function TaskForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
+          className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
         >
           {submitLabel}
         </button>

@@ -135,12 +135,12 @@ export default function Tasks() {
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Tasks</h1>
-          <p className="text-sm text-slate-600">Total: {counts.ALL ?? 0}</p>
+          <h1 className="text-2xl font-bold dark:text-white">Tasks</h1>
+          <p className="text-sm text-slate-600 dark:text-slate-400">Total: {counts.ALL ?? 0}</p>
         </div>
 
         <button
-          className="rounded-2xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-800"
+          className="rounded-2xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
           onClick={openCreate}
           type="button"
         >
@@ -154,8 +154,8 @@ export default function Tasks() {
           const isActive = activeTab === tab.key;
           const pill =
             isActive
-              ? "bg-slate-900 text-white"
-              : "bg-white text-slate-700 hover:bg-slate-50 border";
+              ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+              : "bg-white text-slate-700 hover:bg-slate-50 border dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800";
 
           return (
             <button
@@ -167,7 +167,7 @@ export default function Tasks() {
               <span>{tab.label}</span>
               <span
                 className={`inline-flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs ${
-                  isActive ? "bg-white/15" : "bg-slate-100"
+                  isActive ? "bg-white/15" : "bg-slate-100 dark:bg-slate-800"
                 }`}
               >
                 {counts[tab.key] ?? 0}
@@ -179,11 +179,11 @@ export default function Tasks() {
 
       {/* Lista */}
       {loading ? (
-        <div className="rounded-2xl border bg-white p-6 text-center text-sm text-slate-500">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 text-center text-sm text-slate-500 dark:text-slate-400">
           Carregando tarefas...
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-2xl border bg-white p-6 text-sm text-slate-600">
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 text-sm text-slate-600 dark:text-slate-400">
           Nenhuma tarefa nesse filtro.
         </div>
       ) : (
